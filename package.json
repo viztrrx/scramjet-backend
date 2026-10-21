@@ -1,0 +1,17 @@
+{
+  "name": "scramjet-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Standalone Node.js Wisp backend split from MercuryWorkshop/Scramjet-App",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "@mercuryworkshop/wisp-js": "^0.4.1",
+    "ws": "^8.18.3"
+  }
+}
