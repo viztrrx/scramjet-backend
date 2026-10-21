@@ -1,0 +1,17 @@
+# Render Blueprint for the Wisp backend used by https://frontend.viztrrx.workers.dev
+# (frontend config: wss://backend-ivvq.onrender.com/wisp/).
+services:
+  - type: web
+    name: backend
+    runtime: node
+    plan: free
+    branch: main
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: WISP_ENABLED
+        value: "true"
+      - key: NODE_VERSION
+        value: "22"
