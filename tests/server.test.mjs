@@ -63,3 +63,26 @@ test("WISP_HOSTNAME_BLACKLIST blocks a host and its subdomains only", async (t) 
   assert.equal(await streamOutcome(server.base, "www.blocked.test", 80), HOST_BLOCKED);
   assert.notEqual(await streamOutcome(server.base, "notblocked.test", 80, 2500), HOST_BLOCKED);
 });
+
+test("/dns explains what the proxy's DNS answers, and rejects bad hostnames", async (t) => {
+  const { child, base } = await startServer({ WISP_ENABLED: "true" });
+  t.after(() => child.kill());
+  const bad = await fetch("http://" + base + "/dns?host=not a host");
+  assert.equal(bad.status, 400);
+  const r = await fetch("http://" + base + "/dns?host=example.com");
+  assert.equal(r.status, 200);
+  const report = await r.json();
+  assert.equal(report.host, "example.com");
+  assert.equal(report.proxy_dns, "1.1.1.3, 1.0.0.3", "Cloudflare for Families by default");
+  assert.ok("blocked_by_proxy_dns" in report);
+});
+
+test("WISP_DNS_SERVERS chooses the DNS servers (system = the host's own)", async (t) => {
+  const { child, base } = await startServer({ WISP_ENABLED: "true", WISP_DNS_SERVERS: "system" });
+  t.after(() => child.kill());
+  const report = await (await fetch("http://" + base + "/dns?host=example.com")).json();
+  assert.equal(report.proxy_dns, "system");
+  const custom = await startServer({ WISP_ENABLED: "true", WISP_DNS_SERVERS: "1.1.1.1, 8.8.8.8" });
+  t.after(() => custom.child.kill());
+  assert.equal((await (await fetch("http://" + custom.base + "/dns?host=example.com")).json()).proxy_dns, "1.1.1.1, 8.8.8.8");
+});

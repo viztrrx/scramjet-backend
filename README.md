@@ -16,15 +16,17 @@ The frontend is in [viztrrx/frontend](https://github.com/viztrrx/frontend) and r
 | Health check path | `/health` |
 | `WISP_ENABLED` | `true` (required; without it every WebSocket is closed and `/health` returns 503) |
 | `WISP_HOSTNAME_BLACKLIST` | optional, comma-separated hostnames to refuse (subdomains included) |
+| `WISP_DNS_SERVERS` | optional. DNS servers for the sites people open, comma-separated, or `system` for Render's own resolver. Default: Cloudflare for Families (`1.1.1.3,1.0.0.3`), which blocks malware and adult sites |
 
 Render sets `PORT`; the server listens on `0.0.0.0`. Free instances sleep when idle and may take about a minute to wake; the frontend retries the WebSocket while that happens.
 
 ## Endpoints
 
 - `GET /health` — `200 ok` when Wisp is enabled, `503` otherwise.
-- `wss://…/wisp/` — the Wisp endpoint used by the frontend's libcurl transport.
+- `wss://…/wisp/` — the Wisp endpoint used by the frontend's transports (libcurl, Epoxy).
+- `GET /dns?host=example.com` — what the proxy's DNS answers for a site, next to normal DNS (1.1.1.1). `"blocked_by_proxy_dns": true` means the family filter blocks it: Wisp refuses sites that resolve to `0.0.0.0`, and the browser shows "tls handshake eof" or a failed connection.
 
-Wisp refuses UDP streams and connections to loopback/private addresses, and resolves hostnames through Cloudflare's filtering DNS (`1.1.1.3`, `1.0.0.3`).
+Wisp refuses UDP streams and connections to loopback/private addresses, and resolves hostnames through Cloudflare's filtering DNS (`1.1.1.3`, `1.0.0.3`) unless `WISP_DNS_SERVERS` says otherwise.
 
 ## Saved sessions
 
