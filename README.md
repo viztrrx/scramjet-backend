@@ -2,7 +2,7 @@
 
 This is the **Node.js/Wisp backend-only** part of [MercuryWorkshop/Scramjet-App](https://github.com/MercuryWorkshop/Scramjet-App), separated from the browser frontend.
 
-The frontend is in [viztrrx/scramjet-frontend](https://github.com/viztrrx/scramjet-frontend) and runs on Cloudflare Workers at `https://frontend.viztrrx.workers.dev`. It connects to this backend at `wss://backend-ivvq.onrender.com/wisp/` (set in the frontend's `public/config.js`). This backend does **not** serve HTML, browser scripts, or the Scramjet frontend.
+The frontend is in [viztrrx/frontend](https://github.com/viztrrx/frontend) and runs on Cloudflare Workers at `https://frontend.viztrrx.workers.dev`. It connects to this backend at `wss://backend-ivvq.onrender.com/wisp/` (set in the frontend's `public/config.js`). This backend does **not** serve HTML, browser scripts, or the Scramjet frontend.
 
 ## Deploy to Render
 
@@ -25,6 +25,10 @@ Render sets `PORT`; the server listens on `0.0.0.0`. Free instances sleep when i
 - `wss://…/wisp/` — the Wisp endpoint used by the frontend's libcurl transport.
 
 Wisp refuses UDP streams and connections to loopback/private addresses, and resolves hostnames through Cloudflare's filtering DNS (`1.1.1.3`, `1.0.0.3`).
+
+## Saved sessions
+
+Saved proxy sessions (the "Your sessions" list on the frontend's `saints://home`) are not stored on this backend: Render's free disk is wiped on every restart. They are kept in Cloudflare R2 by the frontend Worker, per Saints account; see "Saved sessions" in the frontend's README. This server only relays the Wisp traffic, so a restart here never signs anyone out.
 
 ## Tests
 
