@@ -1,0 +1,43 @@
+# WARP egress overlay for the Oracle setup. Routes the Wisp server's outbound
+# traffic through Cloudflare WARP, so sites see a WARP IP instead of the VM's
+# datacenter IP (fewer "are you a robot" checks and 429s). See oracle/WARP.md.
+#
+# Run from the oracle/ folder:
+#   docker compose -f docker-compose.yml -f warp/docker-compose.warp.yml up -d --build
+#
+# epoxy-server (the base `wisp` service) has no outbound-proxy option, so this
+# overlay swaps in the Python Wisp server, which does, and sends its outbound
+# through the WARP container's SOCKS5 proxy. The base `wisp` service still
+# builds but is unused here (Caddy is pointed at wisp-warp); you can ignore it.
+services:
+  # Cloudflare WARP as a SOCKS5 proxy on warp:1080 (image: github.com/cmj2002/warp-docker).
+  warp:
+    image: caomingjun/warp
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=0
+      - net.ipv4.conf.all.src_valid_mark=1
+    environment:
+      # A free WARP account is registered automatically on first start.
+      WARP_SLEEP: "2"
+    volumes:
+      - warp_data:/var/lib/cloudflare-warp
+
+  # Python Wisp server, outbound through WARP's SOCKS5. socks5h resolves DNS at
+  # the WARP exit, so the family-filter DNS (WISP_DNS_SERVERS) does NOT apply on
+  # this path — WARP's resolver is used instead.
+  wisp-warp:
+    build: ./warp/pywisp
+    restart: unless-stopped
+    depends_on:
+      - warp
+
+  # Point Caddy's /wisp/ upstream at the Python server instead of epoxy-server.
+  caddy:
+    environment:
+      WISP_UPSTREAM: "wisp-warp:6001"
+
+volumes:
+  warp_data:

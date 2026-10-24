@@ -1,9 +1,11 @@
 # Caddy gets the HTTPS certificate for $DOMAIN automatically (Let's Encrypt)
 # and passes WebSockets through.
 {$DOMAIN} {
-	# Wisp traffic goes to the Rust server.
+	# Wisp traffic goes to the Rust server. The WARP variant (oracle/WARP.md)
+	# points this at the Python Wisp server by setting WISP_UPSTREAM; unset, it
+	# stays the Rust epoxy-server as before.
 	handle /wisp/* {
-		reverse_proxy wisp:4000
+		reverse_proxy {$WISP_UPSTREAM:wisp:4000}
 	}
 	# /health and /dns go to the Node server.
 	handle {

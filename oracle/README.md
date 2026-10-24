@@ -115,6 +115,10 @@ Deploy the frontend. When everything works, you can suspend the Render service. 
 
 ---
 
+## WARP egress (optional)
+
+Sites that block datacenter IPs (Google/YouTube "are you a robot", 429s) see this VM's cloud IP. [WARP.md](./WARP.md) is an optional overlay that routes the Wisp server's outbound traffic through Cloudflare WARP so it looks like a consumer IP. It's a documented recipe, not a tested build, and for YouTube you don't need it (the frontend uses Invidious). See [WARP.md](./WARP.md).
+
 ## Day-to-day
 
 | Task | Command (in `scramjet-backend/oracle`) |
