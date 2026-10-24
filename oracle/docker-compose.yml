@@ -1,0 +1,34 @@
+# Run from this folder:  docker compose up -d --build
+services:
+  wisp:
+    build: ../epoxy
+    restart: unless-stopped
+
+  api:
+    build: ..
+    restart: unless-stopped
+    environment:
+      WISP_ENABLED: "true"
+      # Optional, same meaning as on Render:
+      # WISP_DNS_SERVERS: "1.1.1.3,1.0.0.3"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in oracle/.env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - wisp
+      - api
+
+volumes:
+  caddy_data:
+  caddy_config:

@@ -1,6 +1,23 @@
 # Render Blueprint for the Wisp backend used by https://frontend.viztrrx.workers.dev
-# (frontend config: wss://backend-ivvq.onrender.com/wisp/).
+# (frontend config: public/config.js wispUrl).
 services:
+  # Rust Wisp server (epoxy-server, see epoxy/). Much lighter on Render's
+  # small free CPU than the Node server. Answers 200 "ok" on /health.
+  - type: web
+    name: backend-rust
+    runtime: docker
+    plan: free
+    # Closest region to the people using the proxy; can't be changed later.
+    region: virginia
+    branch: main
+    dockerfilePath: ./epoxy/Dockerfile
+    dockerContext: ./epoxy
+    dockerCommand: epoxy-server /etc/epoxy/render.toml
+    healthCheckPath: /health
+    autoDeploy: true
+
+  # Original Node server (src/index.js). Kept so the current URL
+  # (backend-ivvq.onrender.com) keeps working until the frontend is switched.
   - type: web
     name: backend
     runtime: node

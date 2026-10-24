@@ -1,0 +1,41 @@
+# epoxy-server settings, matching what src/index.js does with wisp-js.
+# All options: https://github.com/MercuryWorkshop/epoxy-tls/blob/main/server/src/config.rs
+
+[server]
+# Caddy reaches this inside the Docker network; it is not exposed to the internet.
+bind = ["tcp", "0.0.0.0:4000"]
+transport = "websocket"
+resolve_ipv6 = false
+tcp_nodelay = true
+use_real_ip_headers = true
+non_ws_response = "ok"
+log_level = "WARN"
+runtime = "multithread"
+
+[wisp]
+# The frontend connects to wss://<domain>/wisp/ (no trailing slash here).
+prefix = "/wisp"
+wisp_v2 = true
+extensions = ["motd"]
+allow_wsproxy = false
+
+[stream]
+tcp_nodelay = true
+allow_udp = false
+
+# DNS for the sites people open: Cloudflare for Families, like the Node server.
+# Blocked sites resolve to 0.0.0.0, which allow_non_global = false refuses.
+# Use [] for the VM's own resolver, or ["1.1.1.1", "1.0.0.1"] for unfiltered DNS.
+dns_servers = ["1.1.1.3", "1.0.0.3"]
+
+# Only public internet addresses. This also keeps people away from the VM
+# itself, the Docker network and Oracle's metadata service (169.254.169.254).
+allow_direct_ip = true
+allow_loopback = false
+allow_multicast = false
+allow_global = true
+allow_non_global = false
+
+# Hostnames to refuse, as regexes (WISP_HOSTNAME_BLACKLIST on Render), e.g.
+# block_hosts = ['(^|\.)badsite\.test$']
+block_hosts = []

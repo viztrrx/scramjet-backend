@@ -1,0 +1,35 @@
+# epoxy-server settings for Render (see render.yaml). Same rules as
+# config.toml, tuned for a free instance with a fraction of one CPU.
+
+[server]
+# Render sends traffic to port 10000 by default.
+bind = ["tcp", "0.0.0.0:10000"]
+transport = "websocket"
+resolve_ipv6 = false
+tcp_nodelay = true
+use_real_ip_headers = true
+# Every plain HTTP request (including Render's /health check and the
+# frontend's wake-up pings) gets 200 "ok".
+non_ws_response = "ok"
+log_level = "WARN"
+# One thread: with ~0.1 CPU, more threads only fight over the same slice.
+runtime = "singlethread"
+
+[wisp]
+prefix = "/wisp"
+wisp_v2 = true
+extensions = ["motd"]
+allow_wsproxy = false
+
+[stream]
+tcp_nodelay = true
+allow_udp = false
+# Cloudflare for Families, like the Node server. Blocked sites resolve to
+# 0.0.0.0, which allow_non_global = false refuses.
+dns_servers = ["1.1.1.3", "1.0.0.3"]
+allow_direct_ip = true
+allow_loopback = false
+allow_multicast = false
+allow_global = true
+allow_non_global = false
+block_hosts = []
