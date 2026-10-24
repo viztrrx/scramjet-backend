@@ -4,7 +4,7 @@ This folder runs the backend on an Oracle Cloud Always Free ARM VM. Unlike Rende
 
 | Container | What it does |
 |---|---|
-| `wisp` | [epoxy-server](https://github.com/MercuryWorkshop/epoxy-tls/tree/main/server), MercuryWorkshop's Wisp server written in Rust. Handles `wss://<domain>/wisp/`. Settings are in [`epoxy/config.toml`](epoxy/config.toml). |
+| `wisp` | [epoxy-server](https://github.com/MercuryWorkshop/epoxy-tls/tree/main/server), MercuryWorkshop's Wisp server written in Rust. Handles `wss://<domain>/wisp/`. Settings are in [`epoxy/config.toml`](../epoxy/config.toml). |
 | `api` | The Node server from `src/index.js`. Here it only answers `/health` and `/dns`. |
 | `caddy` | Serves HTTPS on ports 80/443, gets the certificate automatically, and sends `/wisp/` to `wisp` and everything else to `api`. |
 
@@ -127,8 +127,8 @@ Deploy the frontend. When everything works, you can suspend the Render service. 
 
 The containers start again by themselves after a VM reboot. Ubuntu installs security updates automatically. Run `sudo apt update && sudo apt upgrade` now and then for everything else.
 
-**Blocking sites:** add regexes to `block_hosts` in `epoxy/config.toml` (for example `'(^|\.)badsite\.test$'`), then run `docker compose up -d --build`.
+**Blocking sites:** add regexes to `block_hosts` in `../epoxy/config.toml` (for example `'(^|\.)badsite\.test$'`), then run `docker compose up -d --build`.
 
-**DNS filtering:** `dns_servers` in `epoxy/config.toml` defaults to Cloudflare for Families, the same as on Render. If you change it, also set `WISP_DNS_SERVERS` for `api` in `docker-compose.yml` so `/dns` reports the same thing.
+**DNS filtering:** `dns_servers` in `../epoxy/config.toml` defaults to Cloudflare for Families, the same as on Render. If you change it, also set `WISP_DNS_SERVERS` for `api` in `docker-compose.yml` so `/dns` reports the same thing.
 
 **Going back to the Node Wisp server:** in `Caddyfile`, change `reverse_proxy wisp:4000` to `reverse_proxy api:8080`, then run `docker compose restart caddy`.

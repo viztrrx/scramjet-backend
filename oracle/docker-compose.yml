@@ -1,7 +1,7 @@
 # Run from this folder:  docker compose up -d --build
 services:
   wisp:
-    build: ./epoxy
+    build: ../epoxy
     restart: unless-stopped
 
   api:

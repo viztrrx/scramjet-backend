@@ -15,7 +15,7 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 COPY --from=build /src/target/release/epoxy-server /usr/local/bin/epoxy-server
-COPY config.toml /etc/epoxy/config.toml
+COPY *.toml /etc/epoxy/
 USER nobody
 EXPOSE 4000
 CMD ["epoxy-server", "/etc/epoxy/config.toml"]
