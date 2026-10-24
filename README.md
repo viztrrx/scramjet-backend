@@ -2,7 +2,7 @@
 
 This is the **Node.js/Wisp backend-only** part of [MercuryWorkshop/Scramjet-App](https://github.com/MercuryWorkshop/Scramjet-App), separated from the browser frontend.
 
-The frontend is in [viztrrx/frontend](https://github.com/viztrrx/frontend) and runs on Cloudflare Workers at `https://frontend.viztrrx.workers.dev`. It connects to this backend at `wss://backend-ivvq.onrender.com/wisp/` (set in the frontend's `public/config.js`). This backend does **not** serve HTML, browser scripts, or the Scramjet frontend.
+The frontend is in [viztrrx/frontend](https://github.com/viztrrx/frontend) and runs on Cloudflare Workers at `https://frontend.viztrrx.workers.dev`. It connects to the `backend-rust` service at `wss://backend-rust-qr67.onrender.com/wisp/` (set in the frontend's `public/config.js`). This backend does **not** serve HTML, browser scripts, or the Scramjet frontend.
 
 ## Deploy to Render (Rust server, recommended)
 
