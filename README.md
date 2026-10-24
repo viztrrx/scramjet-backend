@@ -20,6 +20,10 @@ The frontend is in [viztrrx/frontend](https://github.com/viztrrx/frontend) and r
 
 Render sets `PORT`; the server listens on `0.0.0.0`. Free instances sleep when idle and may take about a minute to wake; the frontend retries the WebSocket while that happens.
 
+## Deploy to Oracle Cloud (faster, free)
+
+[`oracle/`](./oracle) runs the backend on an Oracle Cloud Always Free ARM VM, with Docker Compose and Caddy for HTTPS. Wisp is served by MercuryWorkshop's Rust `epoxy-server`, and this Node server answers `/health` and `/dns`. The VM never sleeps and has much more CPU and bandwidth than Render free. See [oracle/README.md](./oracle/README.md) for step-by-step setup.
+
 ## Endpoints
 
 - `GET /health` — `200 ok` when Wisp is enabled, `503` otherwise.

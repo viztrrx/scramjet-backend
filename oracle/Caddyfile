@@ -1,0 +1,12 @@
+# Caddy gets the HTTPS certificate for $DOMAIN automatically (Let's Encrypt)
+# and passes WebSockets through.
+{$DOMAIN} {
+	# Wisp traffic goes to the Rust server.
+	handle /wisp/* {
+		reverse_proxy wisp:4000
+	}
+	# /health and /dns go to the Node server.
+	handle {
+		reverse_proxy api:8080
+	}
+}
